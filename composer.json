@@ -1,17 +1,17 @@
 {
-    "name": "emsifa/api-wilayah",
-    "description": "Public API Wilayah Indonesia",
+    "name": "vatih/nusantara",
+    "description": "Static API Data Wilayah Indonesia",
     "type": "project",
     "license": "MIT",
     "authors": [
         {
-            "name": "Muhammad Syifa",
-            "email": "emsifa@gmail.com"
+            "name": "Ibrahim Vatih",
+            "email": "vatih@example.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Emsifa\\ApiWilayah\\": "src/"
+            "Vatih\\Nusantara\\": "src/"
         }
     },
     "require": {}

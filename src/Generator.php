@@ -1,6 +1,6 @@
 <?php
 
-namespace Emsifa\ApiWilayah;
+namespace Vatih\Nusantara;
 
 class Generator
 {
@@ -22,7 +22,7 @@ class Generator
 
     public function clearOutputDir()
     {
-        $files = glob($this->outputDir.'/*');
+        $files = glob($this->outputDir . '/*');
         foreach ($files as $file) {
             Helper::removeFileOrDirectory($file);
         }
@@ -38,21 +38,14 @@ class Generator
         foreach ($provinces as $province) {
             $regencies = $this->repository->getRegenciesByProvinceId($province['id']);
             $this->generateApi("/regencies/{$province['id']}.json", $regencies);
-            $this->generateApi("/province/{$province['id']}.json", $province);
 
             foreach ($regencies as $regency) {
                 $districts = $this->repository->getDistrictsByRegencyId($regency['id']);
                 $this->generateApi("/districts/{$regency['id']}.json", $districts);
-                $this->generateApi("/regency/{$regency['id']}.json", $regency);
 
                 foreach ($districts as $district) {
                     $villages = $this->repository->getVillagesByDistrictId($district['id']);
                     $this->generateApi("/villages/{$district['id']}.json", $villages);
-                    $this->generateApi("/district/{$district['id']}.json", $district);
-
-                    foreach ($villages as $village) {
-                        $this->generateApi("/village/{$village['id']}.json", $village);
-                    }
                 }
             }
         }

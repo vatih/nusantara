@@ -1,6 +1,6 @@
 <?php
 
-namespace Emsifa\ApiWilayah;
+namespace Vatih\Nusantara;
 
 use InvalidArgumentException;
 
@@ -74,7 +74,12 @@ class Repository
         foreach ($reader as $row) {
             $data = [];
             foreach ($map as $i => $key) {
-                $data[$key] = isset($row[$i]) ? $row[$i] : null;
+                $value = isset($row[$i]) ? $row[$i] : null;
+                // Convert 'name' field to Title Case
+                if ($key === 'name' && $value !== null) {
+                    $value = Helper::toTitleCase($value);
+                }
+                $data[$key] = $value;
             }
             $rows[] = $data;
         }
@@ -117,7 +122,7 @@ class Repository
     protected function getFilePath(string $file)
     {
         $ds = DIRECTORY_SEPARATOR;
-        return rtrim($this->dataDir, $ds).$ds.trim($file, $ds);
+        return rtrim($this->dataDir, $ds) . $ds . trim($file, $ds);
     }
 
 }
