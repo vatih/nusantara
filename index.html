@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id" class="antialiased bg-gray-50">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
   <meta property="og:title" content="Nusantara API - Data Wilayah Indonesia" />
   <meta property="og:description"
@@ -15,225 +14,287 @@
 
   <title>Nusantara API - Data Wilayah Indonesia</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            primary: '#0F172A',
+            secondary: '#334155',
+            accent: '#3B82F6',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" defer></script>
   <script src="js/app.js" defer></script>
+
+  <style>
+    /* Custom Scrollbar for Pre tags */
+    pre::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    pre::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid #fff;
+      width: 24px;
+      height: 24px;
+      -webkit-animation: spin 1s linear infinite;
+      /* Safari */
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
-<body>
-  <div id="app" class="container-fluid my-3 my-md-5">
-    <div class="row d-flex align-items-center justify-content-center" style="height: 100vh">
-      <div class="col-lg-7 col-md-7 col-sm-10 col-11">
-        <header>
-          <h3 class="text-muted"><strong>NUSANTARA API</strong></h3>
-          <h2 class="mt-0 mb-0 text-info">
-            DATA WILAYAH INDONESIA
-          </h2>
-          <p class="mt-3 mb-2 text-muted">
-            Contoh penggunaan <a href="https://github.com/vatih/nusantara" class="underline">API statis data wilayah
-              Indonesia <sup><i class="icon ion-logo-github text-info"></i></sup></a> menggunakan Javascript
-            <code>fetch</code> API.
-          </p>
-          <p class="text-muted small">
-            Project ini digunakan oleh <strong>PT Aset Midas Amano</strong> sebagai bagian dari holding features.
-          </p>
-        </header>
+<body class="text-slate-800">
+  <div id="app" class="min-h-screen flex flex-col items-center py-10 px-4 sm:px-6 lg:px-8">
 
-
-        <div class="row">
-          <!-- PROVINSI -->
-          <div class="col-md-12">
-            <div class="card mb-4">
-              <div v-if="fetchProvincesCode" class="card-body bg-secondary">
-                <div class="row">
-                  <div class="col-md-6">
-                    <h5 class="text-warning mb-3 mt-0">Fetch List Provinsi</h4>
-                      <pre v-html="fetchProvincesCode" class="mb-0 text-white"></pre>
-                  </div>
-                  <div class="col-md-6">
-                    <h5 class="text-warning mb-3 mt-0 mt-md-0 mt-3">Response</h5>
-                    <div v-if="fetchingProvinces" class="text-white d-flex justify-content-center align-items-center"
-                      style="max-height: 140px;">
-                      <i class="icon ion-md-refresh spinning d-inline-block text-fade-50" style="font-size: 2rem;"></i>
-                    </div>
-                    <pre v-if="!fetchingProvinces" v-html="responseProvinces" class="text-white"
-                      style="max-height: 140px;"></pre>
-                  </div>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="form-group mb-0">
-                  <label for="">Pilih Provinsi</label>
-                  <select v-model="provinceId" class="form-control">
-                    <option value=""></option>
-                    <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- KAB/KOTA -->
-          <div class="col-md-12 d-none unhide-on-mounted">
-            <transition name="fade">
-              <div v-if="fetchRegenciesCode" class="card mb-4">
-                <div class="card-body bg-secondary">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h5 class="text-warning mb-3 mt-0">Fetch List Kab/Kota</h4>
-                        <pre v-html="fetchRegenciesCode" class="mb-0 text-white"></pre>
-                    </div>
-                    <div class="col-md-6">
-                      <h5 class="text-warning mb-3 mt-0 mt-md-0 mt-3">Response</h5>
-                      <div v-if="fetchingRegencies" class="text-white d-flex justify-content-center align-items-center"
-                        style="max-height: 140px;">
-                        <i class="icon ion-md-refresh spinning d-inline-block text-fade-50"
-                          style="font-size: 2rem;"></i>
-                      </div>
-                      <pre v-if="!fetchingRegencies" v-html="responseRegencies" class="text-white"
-                        style="max-height: 140px;"></pre>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="provinceId" class="card-body">
-                  <div class="form-group mb-0">
-                    <label for="">Pilih Kab/Kota</label>
-                    <select v-model="regencyId" class="form-control">
-                      <option value=""></option>
-                      <option v-for="reg in regencies" :key="reg.id" :value="reg.id">{{ reg.name }}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </div>
-        </div>
-        <!-- /row -->
-
-        <div class="row">
-          <!-- KECAMATAN -->
-          <div class="col-md-12 d-none unhide-on-mounted">
-            <transition name="fade">
-              <div v-if="fetchDistrictsCode" class="card mb-4">
-                <div class="card-body bg-secondary">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h5 class="text-warning mb-3 mt-0">Fetch List Kecamatan</h5 class="mb-3 mt-0">
-                      <pre v-html="fetchDistrictsCode" class="mb-0 text-white"></pre>
-                    </div>
-                    <div class="col-md-6">
-                      <h5 class="text-warning mb-3 mt-0 mt-md-0 mt-3">Response</h5>
-                      <div v-if="fetchingDistricts" class="text-white d-flex justify-content-center align-items-center"
-                        style="max-height: 140px;">
-                        <i class="icon ion-md-refresh spinning d-inline-block text-fade-50"
-                          style="font-size: 2rem;"></i>
-                      </div>
-                      <pre v-if="!fetchingDistricts" v-html="responseDistricts" class="text-white"
-                        style="max-height: 140px;"></pre>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="regencyId" class="card-body">
-                  <div class="form-group mb-0">
-                    <label for="">Pilih Kecamatan</label>
-                    <select v-model="districtId" class="form-control">
-                      <option value=""></option>
-                      <option v-for="dist in districts" :key="dist.id" :value="dist.id">{{ dist.name }}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </div>
-          <!-- KELURAHAN -->
-          <div class="col-md-12 d-none unhide-on-mounted">
-            <transition name="fade">
-              <div v-if="fetchVillagesCode" class="card mb-4">
-                <div class="card-body bg-secondary">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h5 class="text-warning mb-3 mt-0">Fetch List Kelurahan</h5>
-                      <pre v-html="fetchVillagesCode" class="mb-0 text-white"></pre>
-                    </div>
-                    <div class="col-md-6">
-                      <h5 class="text-warning mb-3 mt-0 mt-md-0 mt-3">Response</h5>
-                      <div v-if="fetchingVillages" class="text-white d-flex justify-content-center align-items-center"
-                        style="max-height: 140px;">
-                        <i class="icon ion-md-refresh spinning d-inline-block text-fade-50"
-                          style="font-size: 2rem;"></i>
-                      </div>
-                      <pre v-if="!fetchingVillages" v-html="responseVillages" class="text-white"
-                        style="max-height: 140px;"></pre>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="districtId" class="card-body">
-                  <div class="form-group mb-0">
-                    <label for="">Pilih Kelurahan</label>
-                    <select v-model="villageId" class="form-control">
-                      <option value=""></option>
-                      <option v-for="vill in villages" :key="vill.id" :value="vill.id">{{ vill.name }}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </div>
-        </div>
-        <!-- /row -->
-
-        <footer class="mb-4">
-          <div class="row d-flex d-sm-flex d-md-none">
-            <transition name="fade">
-              <div v-if="completed" class="col-12 text-center text-muted mb-4">
-                Selengkapnya
-                <br>
-                <i class="icon ion-md-arrow-down"></i>
-                <br>
-                <a href="" class="d-inline-block text-info" style="font-size: 5rem; margin-top: -24px;">
-                  <strong>
-                    <i class="icon ion-logo-github"></i>
-                  </strong>
-                </a>
-              </div>
-            </transition>
-            <div class="col-12 text-center">
-              <p class="text-muted m-0">
-                &copy; 2026
-                -
-                <a href="https://github.com/vatih" class="text-info">Ibrahim Vatih</a>
-                <span class="text-fade-50">|</span>
-                <span>Powered by <a href="https://pages.github.com/" class="text-info">GitHub Page</a></span>
-              </p>
-            </div>
-          </div>
-          <div class="row d-none d-sm-none d-md-flex">
-            <div class="col-md-6">
-              <p class="text-muted m-0">
-                &copy; 2026
-                -
-                <a href="https://github.com/vatih" class="text-info">Ibrahim Vatih</a>
-                <span class="text-fade-50">|</span>
-                <span>Powered by <a href="https://pages.github.com/" class="text-info">GitHub Page</a></span>
-              </p>
-            </div>
-            <transition name="slide">
-              <div v-if="completed" class="col-md-6 text-right text-muted">
-                Selengkapnya ada di
-                <a href="https://github.com/vatih/nusantara" class="text-info">
-                  <strong>
-                    GitHub
-                    <i class="icon ion-md-arrow-forward"></i>
-                  </strong>
-                </a>
-              </div>
-            </transition>
-          </div>
-        </footer>
+    <!-- Header Section -->
+    <div class="max-w-3xl w-full text-center mb-10">
+      <div
+        class="inline-flex items-center justify-center px-4 py-1.5 mb-4 text-sm font-semibold text-blue-700 bg-blue-100 rounded-full">
+        NUSANTARA API
       </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
+        Data Wilayah Indonesia
+      </h1>
+      <p class="text-lg text-slate-600 mb-2">
+        API statis wilayah administratif Indonesia dalam format JSON. <br class="hidden sm:inline">
+        Cepat, gratis, dan open-source.
+      </p>
+      <p class="text-sm text-slate-500">
+        Project ini digunakan oleh <span class="font-semibold text-slate-700">PT Aset Midas Amano</span> sebagai bagian
+        dari holding features.
+      </p>
     </div>
+
+    <!-- Main Content -->
+    <div class="max-w-3xl w-full space-y-6">
+
+      <!-- PROVINSI -->
+      <div
+        class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+        <div v-if="fetchProvincesCode" class="bg-slate-900 p-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Request Example</h5>
+              <div class="bg-slate-800 rounded-lg p-3 overflow-x-auto border border-slate-700">
+                <pre v-html="fetchProvincesCode" class="text-xs text-slate-300 font-mono leading-relaxed"></pre>
+              </div>
+            </div>
+            <div>
+              <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Response Preview</h5>
+              <div class="bg-slate-800 rounded-lg p-3 h-32 overflow-y-auto border border-slate-700 relative">
+                <div v-if="fetchingProvinces"
+                  class="absolute inset-0 flex items-center justify-center bg-slate-800/80 z-10">
+                  <div class="spinner"></div>
+                </div>
+                <pre v-if="!fetchingProvinces" v-html="responseProvinces"
+                  class="text-xs text-green-400 font-mono leading-relaxed"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 bg-white">
+          <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Provinsi</label>
+          <div class="relative">
+            <select v-model="provinceId"
+              class="block w-full pl-3 pr-10 py-2.5 text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg transition-shadow">
+              <option value="" disabled selected>-- Silakan Pilih --</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- KABUPATEN -->
+      <transition enter-active-class="transition ease-out duration-200" enter-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150"
+        leave-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
+        <div v-if="fetchRegenciesCode"
+          class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+          <div class="bg-slate-900 p-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Request Example</h5>
+                <div class="bg-slate-800 rounded-lg p-3 overflow-x-auto border border-slate-700">
+                  <pre v-html="fetchRegenciesCode" class="text-xs text-slate-300 font-mono leading-relaxed"></pre>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Response Preview</h5>
+                <div class="bg-slate-800 rounded-lg p-3 h-32 overflow-y-auto border border-slate-700 relative">
+                  <div v-if="fetchingRegencies"
+                    class="absolute inset-0 flex items-center justify-center bg-slate-800/80 z-10">
+                    <div class="spinner"></div>
+                  </div>
+                  <pre v-if="!fetchingRegencies" v-html="responseRegencies"
+                    class="text-xs text-green-400 font-mono leading-relaxed"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="provinceId" class="p-6 bg-white">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kabupaten/Kota</label>
+            <div class="relative">
+              <select v-model="regencyId"
+                class="block w-full pl-3 pr-10 py-2.5 text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg transition-shadow">
+                <option value="" disabled selected>-- Silakan Pilih --</option>
+                <option v-for="reg in regencies" :key="reg.id" :value="reg.id">{{ reg.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </transition>
+
+      <!-- KECAMATAN -->
+      <transition enter-active-class="transition ease-out duration-200" enter-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150"
+        leave-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
+        <div v-if="fetchDistrictsCode"
+          class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+          <div class="bg-slate-900 p-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Request Example</h5>
+                <div class="bg-slate-800 rounded-lg p-3 overflow-x-auto border border-slate-700">
+                  <pre v-html="fetchDistrictsCode" class="text-xs text-slate-300 font-mono leading-relaxed"></pre>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Response Preview</h5>
+                <div class="bg-slate-800 rounded-lg p-3 h-32 overflow-y-auto border border-slate-700 relative">
+                  <div v-if="fetchingDistricts"
+                    class="absolute inset-0 flex items-center justify-center bg-slate-800/80 z-10">
+                    <div class="spinner"></div>
+                  </div>
+                  <pre v-if="!fetchingDistricts" v-html="responseDistricts"
+                    class="text-xs text-green-400 font-mono leading-relaxed"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="regencyId" class="p-6 bg-white">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kecamatan</label>
+            <div class="relative">
+              <select v-model="districtId"
+                class="block w-full pl-3 pr-10 py-2.5 text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg transition-shadow">
+                <option value="" disabled selected>-- Silakan Pilih --</option>
+                <option v-for="dist in districts" :key="dist.id" :value="dist.id">{{ dist.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </transition>
+
+      <!-- KELURAHAN -->
+      <transition enter-active-class="transition ease-out duration-200" enter-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150"
+        leave-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
+        <div v-if="fetchVillagesCode"
+          class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+          <div class="bg-slate-900 p-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Request Example</h5>
+                <div class="bg-slate-800 rounded-lg p-3 overflow-x-auto border border-slate-700">
+                  <pre v-html="fetchVillagesCode" class="text-xs text-slate-300 font-mono leading-relaxed"></pre>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Response Preview</h5>
+                <div class="bg-slate-800 rounded-lg p-3 h-32 overflow-y-auto border border-slate-700 relative">
+                  <div v-if="fetchingVillages"
+                    class="absolute inset-0 flex items-center justify-center bg-slate-800/80 z-10">
+                    <div class="spinner"></div>
+                  </div>
+                  <pre v-if="!fetchingVillages" v-html="responseVillages"
+                    class="text-xs text-green-400 font-mono leading-relaxed"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="districtId" class="p-6 bg-white">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kelurahan</label>
+            <div class="relative">
+              <select v-model="villageId"
+                class="block w-full pl-3 pr-10 py-2.5 text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg transition-shadow">
+                <option value="" disabled selected>-- Silakan Pilih --</option>
+                <option v-for="vill in villages" :key="vill.id" :value="vill.id">{{ vill.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </transition>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-16 text-center">
+      <div v-if="completed" class="mb-8 transform transition-all duration-500 ease-in-out">
+        <p class="text-slate-500 mb-2">Tertarik berkontribusi?</p>
+        <a href="https://github.com/vatih/nusantara"
+          class="inline-flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-full font-medium transition-colors shadow-lg">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill-rule="evenodd"
+              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+              clip-rule="evenodd" />
+          </svg>
+          <span>Buka di GitHub</span>
+        </a>
+      </div>
+
+      <div class="text-sm text-slate-400 border-t border-slate-200 pt-8 max-w-lg mx-auto">
+        <p class="mb-1">&copy; 2026 <a href="https://github.com/vatih"
+            class="text-blue-600 hover:text-blue-800 font-semibold transition-colors">Ibrahim Vatih</a>. All rights
+          reserved.</p>
+        <p>Powered by <a href="https://pages.github.com/"
+            class="text-slate-500 hover:text-slate-700 transition-colors">GitHub Pages</a> &bull; Data from <a
+            href="https://github.com/fityannugroho/idn-area-data"
+            class="text-slate-500 hover:text-slate-700 transition-colors">fityannugroho/idn-area-data</a></p>
+      </div>
+    </footer>
+
   </div>
 </body>
 
